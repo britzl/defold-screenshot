@@ -1,0 +1,27 @@
+function init(self)
+	msg.post(".", "acquire_input_focus")
+end
+
+function update(self, dt)
+	msg.post("@render:", "clear_color", { color = vmath.vector4(1.0, 0.5, 0, 1) })
+end
+
+function on_input(self, action_id, action)
+	if action.released then
+		local w = sys.get_config("display.width")
+		local h = sys.get_config("display.height")
+		local png = screenshot.png(0, 0, w, h)
+		local f = io.open("foo.png", "wb")
+		f:write(png)
+		f:flush()
+		f:close()
+		
+		local buffer = screenshot.buffer(0, 0, w, h)
+		resource.set_texture(go.get("cube#model", "texture0"), { type = resource.TEXTURE_TYPE_2D, width = w, height = h, format = resource.TEXTURE_FORMAT_RGBA }, buffer)
+	end
+end
+
+function on_reload(self)
+    -- Add reload-handling code here
+    -- Remove this function if not needed
+end

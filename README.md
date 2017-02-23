@@ -11,8 +11,21 @@ Or point to the ZIP file of a [specific release](https://github.com/britzl/defol
 ## Usage
 The extensions will declare a new module, exposed to Lua as `screenshot`. The extension has three functions:
 
+    -- Take screenshot and encode to a PNG
+    -- Write it to foo.png
     local png = screenshot.png(x, y, w, h)
+    local f = io.open("foo.png", "wb")
+    f:write(png)
+    f:flush()
+    f:close()
+    
+    -- Take screenshot and return it as a Defold buffer
+    -- Set buffer as texture on a model
     local buffer = screenshot.buffer(x, y, w, h)
+    local url = go.get("cube#model", "texture0")
+    resource.set_texture(url, { type = resource.TEXTURE_TYPE_2D, width = w, height = h, format = resource.TEXTURE_FORMAT_RGBA }, buffer)
+    
+    -- Take screenshot and return pixels as a Lua string
     local pixels = screenshot.pixels(x, y, w, h)
 
 ## Credits

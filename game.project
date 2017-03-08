@@ -1,5 +1,6 @@
 [project]
 title = Screenshot
+dependencies = 
 
 [bootstrap]
 main_collection = /example/example.collectionc
@@ -34,11 +35,11 @@ launch_image_1024x768 = /assets/loadingscreens/screen_1024x768.png
 launch_image_1242x2208 = /assets/loadingscreens/screen_1242x2208.png
 launch_image_2208x1242 = /assets/loadingscreens/screen_2208x1242.png
 launch_image_2048x1536 = /assets/loadingscreens/screen_2048x1536.png
-bundle_identifier = com.example.todo
+bundle_identifier = com.britzl.screenshot
 app_icon_167x167 = /assets/appicons/icon_167.png
 
 [osx]
-bundle_identifier = com.example.todo
+bundle_identifier = com.britzl.screenshot
 
 [android]
 app_icon_36x36 = /assets/appicons/icon_36.png
@@ -47,4 +48,5 @@ app_icon_72x72 = /assets/appicons/icon_72.png
 app_icon_96x96 = /assets/appicons/icon_96.png
 app_icon_144x144 = /assets/appicons/icon_144.png
 app_icon_192x192 = /assets/appicons/icon_192.png
+package = com.britzl.screenshot
 

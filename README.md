@@ -14,7 +14,7 @@ The extensions will declare a new module, exposed to Lua as `screenshot`. The ex
     -- Take screenshot and encode to a PNG
     -- Write it to foo.png
     local png = screenshot.png(x, y, w, h)
-    local f = io.open("foo.png", "wb")
+    local f = io.open("screenshot1.png", "wb")
     f:write(png)
     f:flush()
     f:close()

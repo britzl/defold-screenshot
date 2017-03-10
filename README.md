@@ -13,7 +13,7 @@ The extensions will declare a new module, exposed to Lua as `screenshot`. The ex
 
     -- Take screenshot and encode to a PNG
     -- Write it to foo.png
-    local png = screenshot.png(x, y, w, h)
+    local png, w, h = screenshot.png()
     local f = io.open("screenshot1.png", "wb")
     f:write(png)
     f:flush()
@@ -21,12 +21,17 @@ The extensions will declare a new module, exposed to Lua as `screenshot`. The ex
     
     -- Take screenshot and return it as a Defold buffer
     -- Set buffer as texture on a model
-    local buffer = screenshot.buffer(x, y, w, h)
+    local buffer, w, h = screenshot.buffer()
     local url = go.get("cube#model", "texture0")
     resource.set_texture(url, { type = resource.TEXTURE_TYPE_2D, width = w, height = h, format = resource.TEXTURE_FORMAT_RGBA }, buffer)
     
     -- Take screenshot and return pixels as a Lua string
-    local pixels = screenshot.pixels(x, y, w, h)
+    local pixels, w, h = screenshot.pixels()
+
+    -- Capture screenshots of a portion of the screen
+    screenshot.png(x, y, w, h)
+    screenshot.buffer(x, y, w, h)
+    screenshot.pixels(x, y, w, h)
 
 ## Credits
 * [LodePNG](http://lodev.org/lodepng/) for PNG encoding

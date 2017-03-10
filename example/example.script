@@ -8,15 +8,13 @@ end
 
 function on_input(self, action_id, action)
 	if action.released then
-		local w = sys.get_config("display.width")
-		local h = sys.get_config("display.height")
-		local png = screenshot.png(0, 0, w, h)
+		local png, w, h = screenshot.png()
 		local f = io.open(sys.get_save_file(sys.get_config("project.title", "screenshot"), "screenshot1.png"), "wb")
 		f:write(png)
 		f:flush()
 		f:close()
 		
-		local buffer = screenshot.buffer(0, 0, w, h)
+		local buffer, w, h = screenshot.buffer()
 		resource.set_texture(go.get("cube#model", "texture0"), { type = resource.TEXTURE_TYPE_2D, width = w, height = h, format = resource.TEXTURE_FORMAT_RGBA }, buffer)
 	end
 end

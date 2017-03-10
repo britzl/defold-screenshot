@@ -18,32 +18,55 @@ static GLubyte* ReadPixels(unsigned int x, unsigned int y, unsigned int w, unsig
 static int Pixels(lua_State* L) {
   int top = lua_gettop(L);
 
+  unsigned int x, y, w, h;
+  if (top == 4) {
+    x = luaL_checkint(L, 1);
+    y = luaL_checkint(L, 2);
+    w = luaL_checkint(L, 3);
+    h = luaL_checkint(L, 4);
+  } else {
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    x = viewport[0];
+    y = viewport[1];
+    w = viewport[2];
+    h = viewport[3];
+  }
+
   // read pixels
-  const int x = luaL_checkint(L, 1);
-  const int y = luaL_checkint(L, 2);
-  const int w = luaL_checkint(L, 3);
-  const int h = luaL_checkint(L, 4);
   GLubyte* pixels = ReadPixels(x, y, w, h);
 
   // Put the pixel data onto the stack
   lua_pushlstring(L, (char*)pixels, w * h);
+  lua_pushnumber(L, w);
+  lua_pushnumber(L, h);
   delete pixels;
 
-  // Assert that there is one item on the stack.
-  assert(top + 1 == lua_gettop(L));
+  // Assert that there is three items on the stack.
+  assert(top + 3 == lua_gettop(L));
 
-  // Return 1 item
-  return 1;
+  // Return 3 items
+  return 3;
 }
 
 static int Png(lua_State* L) {
   int top = lua_gettop(L);
 
   // read pixels
-  const int x = luaL_checkint(L, 1);
-  const int y = luaL_checkint(L, 2);
-  const int w = luaL_checkint(L, 3);
-  const int h = luaL_checkint(L, 4);
+  unsigned int x, y, w, h;
+  if (top == 4) {
+    x = luaL_checkint(L, 1);
+    y = luaL_checkint(L, 2);
+    w = luaL_checkint(L, 3);
+    h = luaL_checkint(L, 4);
+  } else {
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    x = viewport[0];
+    y = viewport[1];
+    w = viewport[2];
+    h = viewport[3];
+  }
   GLubyte* pixels = ReadPixels(x, y, w, h);
   unsigned int *p = (unsigned int*)pixels;
 
@@ -67,22 +90,34 @@ static int Png(lua_State* L) {
 
   // Put the pixel data onto the stack
   lua_pushlstring(L, (char*)out, outsize);
+  lua_pushnumber(L, w);
+  lua_pushnumber(L, h);
 
-  // Assert that there is one item on the stack.
-  assert(top + 1 == lua_gettop(L));
+  // Assert that there is three items on the stack.
+  assert(top + 3 == lua_gettop(L));
 
-  // Return 1 item
-  return 1;
+  // Return 3 items
+  return 3;
 }
 
 static int Buffer(lua_State* L) {
   int top = lua_gettop(L);
 
   // read pixels
-  const int x = luaL_checkint(L, 1);
-  const int y = luaL_checkint(L, 2);
-  const int w = luaL_checkint(L, 3);
-  const int h = luaL_checkint(L, 4);
+  unsigned int x, y, w, h;
+  if (top == 4) {
+    x = luaL_checkint(L, 1);
+    y = luaL_checkint(L, 2);
+    w = luaL_checkint(L, 3);
+    h = luaL_checkint(L, 4);
+  } else {
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    x = viewport[0];
+    y = viewport[1];
+    w = viewport[2];
+    h = viewport[3];
+  }
   GLubyte* pixels = ReadPixels(x, y, w, h);
 
   // create buffer
@@ -102,8 +137,12 @@ static int Buffer(lua_State* L) {
     // validate and return
     if (dmBuffer::ValidateBuffer(buffer) == dmBuffer::RESULT_OK) {
       dmScript::PushBuffer(L, buffer);
+      lua_pushnumber(L, w);
+      lua_pushnumber(L, h);
     }
     else {
+      lua_pushnil(L);
+      lua_pushnil(L);
       lua_pushnil(L);
     }
   }
@@ -111,13 +150,15 @@ static int Buffer(lua_State* L) {
   else {
     delete pixels;
     lua_pushnil(L);
+    lua_pushnil(L);
+    lua_pushnil(L);
   }
 
-  // Assert that there is one item on the stack.
-  assert(top + 1 == lua_gettop(L));
+  // Assert that there is three items on the stack.
+  assert(top + 3 == lua_gettop(L));
 
-  // Return 1 item
-  return 1;
+  // Return 3 items
+  return 3;
 }
 
 

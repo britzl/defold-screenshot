@@ -125,7 +125,7 @@ static int Buffer(lua_State* L) {
   dmBuffer::StreamDeclaration streams_decl[] = {
     { dmHashString64("pixels"), dmBuffer::VALUE_TYPE_UINT8, 1 }
   };
-  dmBuffer::Result r = dmBuffer::Allocate(w * h * 4, streams_decl, 1, &buffer);
+  dmBuffer::Result r = dmBuffer::Create(w * h * 4, streams_decl, 1, &buffer);
   if (r == dmBuffer::RESULT_OK) {
     // copy pixels into buffer
     uint8_t* data = 0;
@@ -136,7 +136,8 @@ static int Buffer(lua_State* L) {
 
     // validate and return
     if (dmBuffer::ValidateBuffer(buffer) == dmBuffer::RESULT_OK) {
-      dmScript::PushBuffer(L, buffer);
+      dmScript::LuaHBuffer luabuffer = { buffer, true };
+      dmScript::PushBuffer(L, luabuffer);
       lua_pushnumber(L, w);
       lua_pushnumber(L, h);
     }

@@ -181,22 +181,22 @@ static void LuaInit(lua_State* L) {
     assert(top == lua_gettop(L));
 }
 
-dmExtension::Result AppInitializeExtension(dmExtension::AppParams* params) {
+dmExtension::Result AppInitializeScreenshotExtension(dmExtension::AppParams* params) {
     return dmExtension::RESULT_OK;
 }
 
-dmExtension::Result InitializeExtension(dmExtension::Params* params) {
+dmExtension::Result InitializeScreenshotExtension(dmExtension::Params* params) {
     // Init Lua
     LuaInit(params->m_L);
     printf("Registered %s Extension\n", MODULE_NAME);
     return dmExtension::RESULT_OK;
 }
 
-dmExtension::Result AppFinalizeExtension(dmExtension::AppParams* params) {
+dmExtension::Result AppFinalizeScreenshotExtension(dmExtension::AppParams* params) {
     return dmExtension::RESULT_OK;
 }
 
-dmExtension::Result FinalizeExtension(dmExtension::Params* params) {
+dmExtension::Result FinalizeScreenshotExtension(dmExtension::Params* params) {
     return dmExtension::RESULT_OK;
 }
 
@@ -205,4 +205,4 @@ dmExtension::Result FinalizeExtension(dmExtension::Params* params) {
 //
 // DM_DECLARE_EXTENSION(symbol, name, app_init, app_final, init, update, on_event, final)
 
-DM_DECLARE_EXTENSION(Screenshot, LIB_NAME, AppInitializeExtension, AppFinalizeExtension, InitializeExtension, 0, 0, FinalizeExtension)
+DM_DECLARE_EXTENSION(Screenshot, LIB_NAME, AppInitializeScreenshotExtension, AppFinalizeScreenshotExtension, InitializeScreenshotExtension, 0, 0, FinalizeScreenshotExtension)

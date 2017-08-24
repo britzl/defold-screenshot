@@ -1,4 +1,7 @@
 mesh: "/example/cube.dae"
 material: "/example/model.material"
 textures: "/example/images/logo.png"
+skeleton: ""
+animations: ""
+default_animation: ""
 name: "unnamed"

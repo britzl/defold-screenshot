@@ -1,18 +1,36 @@
 name: "model"
 tags: "model"
-vertex_program: "/builtins/materials/model.vp"
+vertex_program: "/example/model.vp"
 fragment_program: "/example/model.fp"
 vertex_constants {
   name: "mtx_view"
   type: CONSTANT_TYPE_VIEW
+  value {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 0.0
+  }
 }
 vertex_constants {
   name: "mtx_proj"
   type: CONSTANT_TYPE_PROJECTION
+  value {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 0.0
+  }
 }
 vertex_constants {
   name: "mtx_normal"
   type: CONSTANT_TYPE_NORMAL
+  value {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 0.0
+  }
 }
 vertex_constants {
   name: "light"

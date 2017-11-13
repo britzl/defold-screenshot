@@ -3,14 +3,27 @@
 #define LIB_NAME "Screenshot"
 #define MODULE_NAME "screenshot"
 
-// include the Defold SDK
 #include <dmsdk/sdk.h>
-#include <GLES2/gl2.h>
 #include "./lodepng.h"
+
+
+
+#if defined(_WIN32)
+	#include <GL/gl.h>
+#elif defined (__EMSCRIPTEN__)
+	#include <GL/gl.h>
+	#include <GL/glext.h>
+#else
+	#include <GLES2/gl2.h>
+	#include <GLES2/gl2ext.h>
+#endif
+
 
 static GLubyte* ReadPixels(unsigned int x, unsigned int y, unsigned int w, unsigned int h) {
 	GLubyte* data = new GLubyte[w * h * 4];
+#if defined(__MACH__) && !( defined(__arm__) || defined(__arm64__) )
 	glBindRenderbuffer(GL_RENDERBUFFER, 1);
+#endif
 	glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	return data;
 }

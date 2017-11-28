@@ -33,6 +33,9 @@ The extensions will declare a new module, exposed to Lua as `screenshot`. The ex
     screenshot.buffer(x, y, w, h)
     screenshot.pixels(x, y, w, h)
 
+## Known issues
+The HTML5 version is currently not capturing screenshots properly (they end up all black).
+
 ## Credits
 * [LodePNG](http://lodev.org/lodepng/) for PNG encoding
 * Graphics in example by [Kenney](http://www.kenney.nl)

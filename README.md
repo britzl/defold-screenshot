@@ -1,3 +1,5 @@
+![](logo.png)
+
 # Defold-Screenshot
 Screenshot extension for the [Defold game engine](http://www.defold.com)
 
@@ -18,13 +20,13 @@ The extensions will declare a new module, exposed to Lua as `screenshot`. The ex
     f:write(png)
     f:flush()
     f:close()
-    
+
     -- Take screenshot and return it as a Defold buffer
     -- Set buffer as texture on a model
     local buffer, w, h = screenshot.buffer()
     local url = go.get("cube#model", "texture0")
     resource.set_texture(url, { type = resource.TEXTURE_TYPE_2D, width = w, height = h, format = resource.TEXTURE_FORMAT_RGBA }, buffer)
-    
+
     -- Take screenshot and return pixels as a Lua string
     local pixels, w, h = screenshot.pixels()
 

@@ -9,7 +9,7 @@
 
 
 #if defined(_WIN32)
-	#include <GL/gl.h>
+	#include <gl/GL.h>
 #elif defined (__EMSCRIPTEN__)
 	#include <GL/gl.h>
 	#include <GL/glext.h>

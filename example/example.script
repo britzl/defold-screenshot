@@ -6,20 +6,27 @@ function update(self, dt)
 	msg.post("@render:", "clear_color", { color = vmath.vector4(1.0, 0.5, 0, 1) })
 end
 
+local function html5_screenshot_callback(self, base_64_img)
+	print(base_64_img)
+end
+
 function on_input(self, action_id, action)
 	if action.released then
-		local png, w, h = screenshot.png()
-		local f = io.open(sys.get_save_file(sys.get_config("project.title", "screenshot"), "screenshot1.png"), "wb")
-		f:write(png)
-		f:flush()
-		f:close()
-		
-		local buffer, w, h = screenshot.buffer()
-		resource.set_texture(go.get("cube#model", "texture0"), { type = resource.TEXTURE_TYPE_2D, width = w, height = h, format = resource.TEXTURE_FORMAT_RGBA }, buffer)
+		if screenshot.html5 then
+			screenshot.html5(html5_screenshot_callback)
+		else
+			local png, w, h = screenshot.png()
+			local f = io.open(sys.get_save_file(sys.get_config("project.title", "screenshot"), "screenshot1.png"), "wb")
+			f:write(png)
+			f:flush()
+			f:close()
+			local buffer, w, h = screenshot.buffer()
+			resource.set_texture(go.get("cube#model", "texture0"), { type = resource.TEXTURE_TYPE_2D, width = w, height = h, format = resource.TEXTURE_FORMAT_RGBA }, buffer)
+		end
 	end
 end
 
 function on_reload(self)
-    -- Add reload-handling code here
-    -- Remove this function if not needed
+	-- Add reload-handling code here
+	-- Remove this function if not needed
 end

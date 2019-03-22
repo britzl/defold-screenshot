@@ -9,7 +9,6 @@
 	#include "./lodepng.h"
 	#include <gl/GL.h>
 #elif defined(__EMSCRIPTEN__)
-	#include "screenshot.h"
 #else
 	#include "./lodepng.h"
 	#include <GLES2/gl2.h>
@@ -175,9 +174,21 @@ static int Buffer(lua_State* L) {
 	return 3;
 }
 #else
-ScreenshotLuaListener cbk;
 
-void UnregisterCallback(lua_State* L)
+struct ScreenshotLuaListener {
+	ScreenshotLuaListener() : m_L(0), m_Callback(LUA_NOREF), m_Self(LUA_NOREF) {}
+	lua_State* m_L;
+	int m_Callback;
+	int m_Self;
+};
+
+typedef void (*JsCallback)(const char* base64image);
+
+extern "C" void screenshot_on_the_next_frame(JsCallback callback);
+
+static ScreenshotLuaListener cbk;
+
+static void UnregisterCallback(lua_State* L)
 {
 	if(cbk.m_Callback != LUA_NOREF)
 	{
@@ -248,7 +259,7 @@ static const luaL_reg Module_methods[] = {
 	{"png", Png},
 	{"buffer", Buffer},
 #endif
-		{0, 0}
+	{0, 0}
 };
 
 static void LuaInit(lua_State* L) {

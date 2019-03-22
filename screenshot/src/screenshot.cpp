@@ -4,19 +4,19 @@
 #define MODULE_NAME "screenshot"
 
 #include <dmsdk/sdk.h>
-#include "./lodepng.h"
 
 #if defined(_WIN32)
+	#include "./lodepng.h"
 	#include <gl/GL.h>
 #elif defined(__EMSCRIPTEN__)
 	#include "screenshot.h"
-	#include <GL/gl.h>
-	#include <GL/glext.h>
 #else
+	#include "./lodepng.h"
 	#include <GLES2/gl2.h>
 	#include <GLES2/gl2ext.h>
 #endif
 
+#if !defined(__EMSCRIPTEN__)
 
 static GLubyte* ReadPixels(unsigned int x, unsigned int y, unsigned int w, unsigned int h) {
 	GLubyte* data = new GLubyte[w * h * 4];
@@ -174,7 +174,7 @@ static int Buffer(lua_State* L) {
 	// Return 3 items
 	return 3;
 }
-#if defined(__EMSCRIPTEN__)
+#else
 SreenshotLuaListener cbk;
 
 void UnregisterCallback(lua_State* L)
@@ -211,7 +211,7 @@ static void JsToCCallback(const char* base64image)
 
 	if (!dmScript::IsInstanceValid(L)) {
 		UnregisterCallback(L);
-		dmLogError("Could not run JsToDef callback because the instance has been deleted.");
+		dmLogError("Could not run Screenshot callback because the instance has been deleted.");
 		lua_pop(L, 2);
 		assert(top == lua_gettop(L));
 	} else {
@@ -241,11 +241,12 @@ static int HTML5_screenshot(lua_State* L) {
 
 // Functions exposed to Lua
 static const luaL_reg Module_methods[] = {
-		{"pixels", Pixels},
-		{"png", Png},
-		{"buffer", Buffer},
 #if defined(__EMSCRIPTEN__)
-		{"html5", HTML5_screenshot},
+	{"html5", HTML5_screenshot},
+#else
+	{"pixels", Pixels},
+	{"png", Png},
+	{"buffer", Buffer},
 #endif
 		{0, 0}
 };

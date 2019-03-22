@@ -45,7 +45,7 @@ The extensions will declare a new module, exposed to Lua as `screenshot`. The ex
 	if screenshot.html5 then
 		screenshot.html5(html5_screenshot_callback)
 	else
-		-- these functions do not available on html5
+		-- these functions are not available on html5
 		screenshot.png(x, y, w, h)
 		screenshot.buffer(x, y, w, h)
 		screenshot.pixels(x, y, w, h)

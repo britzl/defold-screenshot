@@ -175,7 +175,7 @@ static int Buffer(lua_State* L) {
 	return 3;
 }
 #else
-SreenshotLuaListener cbk;
+ScreenshotLuaListener cbk;
 
 void UnregisterCallback(lua_State* L)
 {

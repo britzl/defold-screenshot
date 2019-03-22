@@ -12,7 +12,7 @@ Or point to the ZIP file of a [specific release](https://github.com/britzl/defol
 
 ## Usage
 The extensions will declare a new module, exposed to Lua as `screenshot`. The extension has three functions:
-
+```lua
 	-- Take screenshot and encode to a PNG
 	-- Write it to foo.png
 	local png, w, h = screenshot.png()
@@ -44,8 +44,13 @@ The extensions will declare a new module, exposed to Lua as `screenshot`. The ex
 	-- Do not forget to check is this an html5 platform
 	if screenshot.html5 then
 		screenshot.html5(html5_screenshot_callback)
+	else
+		-- these functions do not available on html5
+		screenshot.png(x, y, w, h)
+		screenshot.buffer(x, y, w, h)
+		screenshot.pixels(x, y, w, h)
 	end		
-
+```
 
 ## Credits
 * [LodePNG](http://lodev.org/lodepng/) for PNG encoding

@@ -6,20 +6,27 @@ function update(self, dt)
 	msg.post("@render:", "clear_color", { color = vmath.vector4(1.0, 0.5, 0, 1) })
 end
 
-function on_input(self, action_id, action)
-	if action.released then
-		local png, w, h = screenshot.png()
-		local f = io.open(sys.get_save_file(sys.get_config("project.title", "screenshot"), "screenshot1.png"), "wb")
-		f:write(png)
-		f:flush()
-		f:close()
-		
-		local buffer, w, h = screenshot.buffer()
-		resource.set_texture(go.get("cube#model", "texture0"), { type = resource.TEXTURE_TYPE_2D, width = w, height = h, format = resource.TEXTURE_FORMAT_RGBA }, buffer)
-	end
+local function download_base64_image(base64_image)
+	local img_for_download = string.gsub(base64_image, "image/png", "image/octet-stream")
+	html5.run("window.location.href='"..img_for_download.."';")
 end
 
-function on_reload(self)
-    -- Add reload-handling code here
-    -- Remove this function if not needed
+local function html5_screenshot_callback(self, base64_img)
+	download_base64_image(base64_img)
+end
+
+function on_input(self, action_id, action)
+	if action.released then
+		if screenshot.html5 then
+			screenshot.html5(html5_screenshot_callback)
+		else
+			local png, w, h = screenshot.png()
+			local f = io.open(sys.get_save_file(sys.get_config("project.title", "screenshot"), "screenshot1.png"), "wb")
+			f:write(png)
+			f:flush()
+			f:close()
+			local buffer, w, h = screenshot.buffer()
+			resource.set_texture(go.get("cube#model", "texture0"), { type = resource.TEXTURE_TYPE_2D, width = w, height = h, format = resource.TEXTURE_FORMAT_RGBA }, buffer)
+		end
+	end
 end

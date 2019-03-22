@@ -4,20 +4,18 @@
 #define MODULE_NAME "screenshot"
 
 #include <dmsdk/sdk.h>
-#include "./lodepng.h"
-
-
 
 #if defined(_WIN32)
+	#include "./lodepng.h"
 	#include <gl/GL.h>
-#elif defined (__EMSCRIPTEN__)
-	#include <GL/gl.h>
-	#include <GL/glext.h>
+#elif defined(__EMSCRIPTEN__)
 #else
+	#include "./lodepng.h"
 	#include <GLES2/gl2.h>
 	#include <GLES2/gl2ext.h>
 #endif
 
+#if !defined(__EMSCRIPTEN__)
 
 static GLubyte* ReadPixels(unsigned int x, unsigned int y, unsigned int w, unsigned int h) {
 	GLubyte* data = new GLubyte[w * h * 4];
@@ -175,14 +173,93 @@ static int Buffer(lua_State* L) {
 	// Return 3 items
 	return 3;
 }
+#else
 
+struct ScreenshotLuaListener {
+	ScreenshotLuaListener() : m_L(0), m_Callback(LUA_NOREF), m_Self(LUA_NOREF) {}
+	lua_State* m_L;
+	int m_Callback;
+	int m_Self;
+};
+
+typedef void (*JsCallback)(const char* base64image);
+
+extern "C" void screenshot_on_the_next_frame(JsCallback callback);
+
+static ScreenshotLuaListener cbk;
+
+static void UnregisterCallback(lua_State* L)
+{
+	if(cbk.m_Callback != LUA_NOREF)
+	{
+		dmScript::Unref(cbk.m_L, LUA_REGISTRYINDEX, cbk.m_Callback);
+		dmScript::Unref(cbk.m_L, LUA_REGISTRYINDEX, cbk.m_Self);
+		cbk.m_Callback = LUA_NOREF;
+	}
+}
+
+static void JsToCCallback(const char* base64image)
+{
+	if(cbk.m_Callback == LUA_NOREF)
+	{
+		dmLogInfo("Callback do not exist.");
+		return;
+	}
+	lua_State* L = cbk.m_L;
+	int top = lua_gettop(L);
+	lua_rawgeti(L, LUA_REGISTRYINDEX, cbk.m_Callback);
+	//[-1] - callback
+	lua_rawgeti(L, LUA_REGISTRYINDEX, cbk.m_Self);
+	//[-1] - self
+	//[-2] - callback
+	lua_pushvalue(L, -1);
+	//[-1] - self
+	//[-2] - self
+	//[-3] - callback
+	dmScript::SetInstance(L);
+	//[-1] - self
+	//[-2] - callback
+
+	if (!dmScript::IsInstanceValid(L)) {
+		UnregisterCallback(L);
+		dmLogError("Could not run Screenshot callback because the instance has been deleted.");
+		lua_pop(L, 2);
+		assert(top == lua_gettop(L));
+	} else {
+		lua_pushstring(L, base64image);
+		int ret = lua_pcall(L, 2, 0, 0);
+		if(ret != 0) {
+			dmLogError("Error running callback: %s", lua_tostring(L, -1));
+			lua_pop(L, 1);
+		}
+		UnregisterCallback(L);
+	}
+	assert(top == lua_gettop(L));
+}
+
+static int HTML5_screenshot(lua_State* L) {
+	cbk.m_L = dmScript::GetMainThread(L);
+	luaL_checktype(L, 1, LUA_TFUNCTION);
+	lua_pushvalue(L, 1);
+	cbk.m_Callback = dmScript::Ref(L, LUA_REGISTRYINDEX);
+	dmScript::GetInstance(L);
+	cbk.m_Self = dmScript::Ref(L, LUA_REGISTRYINDEX);
+	
+	screenshot_on_the_next_frame(JsToCCallback);
+	return 0;
+}
+#endif
 
 // Functions exposed to Lua
 static const luaL_reg Module_methods[] = {
-		{"pixels", Pixels},
-		{"png", Png},
-		{"buffer", Buffer},
-		{0, 0}
+#if defined(__EMSCRIPTEN__)
+	{"html5", HTML5_screenshot},
+#else
+	{"pixels", Pixels},
+	{"png", Png},
+	{"buffer", Buffer},
+#endif
+	{0, 0}
 };
 
 static void LuaInit(lua_State* L) {

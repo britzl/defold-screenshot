@@ -1,4 +1,5 @@
 function init(self)
+	self.click_num = 1
 	msg.post(".", "acquire_input_focus")
 end
 
@@ -18,7 +19,13 @@ end
 function on_input(self, action_id, action)
 	if action.released then
 		if screenshot.html5 then
-			screenshot.html5(html5_screenshot_callback)
+			if self.click_num % 2 == 0 then
+				local x, y, w, h = 100, 300, 500, 600
+				screenshot.html5(x, y, w, h, html5_screenshot_callback)
+			else
+				screenshot.html5(html5_screenshot_callback)
+			end
+			self.click_num = self.click_num + 1
 		else
 			local png, w, h = screenshot.png()
 			local f = io.open(sys.get_save_file(sys.get_config("project.title", "screenshot"), "screenshot1.png"), "wb")

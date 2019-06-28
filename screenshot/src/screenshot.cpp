@@ -184,7 +184,7 @@ struct ScreenshotLuaListener {
 
 typedef void (*JsCallback)(const char* base64image);
 
-extern "C" void screenshot_on_the_next_frame(JsCallback callback);
+extern "C" void screenshot_on_the_next_frame(JsCallback callback, int x, int y, int w, int h);
 
 static ScreenshotLuaListener cbk;
 
@@ -238,14 +238,26 @@ static void JsToCCallback(const char* base64image)
 }
 
 static int HTML5_screenshot(lua_State* L) {
+	int top = lua_gettop(L);
+	
 	cbk.m_L = dmScript::GetMainThread(L);
 	luaL_checktype(L, 1, LUA_TFUNCTION);
 	lua_pushvalue(L, 1);
 	cbk.m_Callback = dmScript::Ref(L, LUA_REGISTRYINDEX);
 	dmScript::GetInstance(L);
 	cbk.m_Self = dmScript::Ref(L, LUA_REGISTRYINDEX);
+
+	unsigned int x, y, w, h;
+	if (top == 5) {
+		x = luaL_checkint(L, 2);
+		y = luaL_checkint(L, 3);
+		w = luaL_checkint(L, 4);
+		h = luaL_checkint(L, 5);
+	}
 	
-	screenshot_on_the_next_frame(JsToCCallback);
+	screenshot_on_the_next_frame(JsToCCallback, x, y, w, h);
+	
+	assert(top == lua_gettop(L));
 	return 0;
 }
 #endif

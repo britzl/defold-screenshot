@@ -21,7 +21,7 @@ function on_input(self, action_id, action)
 		if screenshot.html5 then
 			if self.click_num % 2 == 0 then
 				local x, y, w, h = 100, 300, 500, 600
-				screenshot.html5(html5_screenshot_callback, x, y, w, h)
+				screenshot.html5(x, y, w, h, html5_screenshot_callback)
 			else
 				screenshot.html5(html5_screenshot_callback)
 			end

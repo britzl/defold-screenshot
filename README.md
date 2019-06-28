@@ -21,7 +21,7 @@ The extensions will declare a new module, exposed to Lua as `screenshot`. The ex
 			-- share your base64 png
 		end)
 		-- Capture screenshots of a portion of the screen:
-		-- screenshot.html5(callback, x, y, width, height)
+		-- screenshot.html5(x, y, width, height, callback)
 	else
 		-- IMPORTANT! The functionality below is NOT available on HTML5
 

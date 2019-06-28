@@ -239,21 +239,23 @@ static void JsToCCallback(const char* base64image)
 
 static int HTML5_screenshot(lua_State* L) {
 	int top = lua_gettop(L);
+
+	int fn_num = 1;
+	unsigned int x, y, w, h;
+	if (top == 5) {
+		x = luaL_checkint(L, 1);
+		y = luaL_checkint(L, 2);
+		w = luaL_checkint(L, 3);
+		h = luaL_checkint(L, 4);
+		fn_num = 5;
+	}
 	
 	cbk.m_L = dmScript::GetMainThread(L);
-	luaL_checktype(L, 1, LUA_TFUNCTION);
-	lua_pushvalue(L, 1);
+	luaL_checktype(L, fn_num, LUA_TFUNCTION);
+	lua_pushvalue(L, fn_num);
 	cbk.m_Callback = dmScript::Ref(L, LUA_REGISTRYINDEX);
 	dmScript::GetInstance(L);
 	cbk.m_Self = dmScript::Ref(L, LUA_REGISTRYINDEX);
-
-	unsigned int x, y, w, h;
-	if (top == 5) {
-		x = luaL_checkint(L, 2);
-		y = luaL_checkint(L, 3);
-		w = luaL_checkint(L, 4);
-		h = luaL_checkint(L, 5);
-	}
 	
 	screenshot_on_the_next_frame(JsToCCallback, x, y, w, h);
 	

@@ -13,7 +13,7 @@ var LibScreenshot = {
 				hidden_canvas.height = h;
 
 				var context = hidden_canvas.getContext('2d');
-				context.drawImage(canvas, x, y, w, h, 0, 0, w, h);
+				context.drawImage(canvas, x, canvas.height - y, w, h, 0, 0, w, h);
 				
 				image = hidden_canvas.toDataURL("image/png");
 

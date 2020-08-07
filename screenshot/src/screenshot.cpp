@@ -293,7 +293,6 @@ dmExtension::Result AppInitializeScreenshotExtension(dmExtension::AppParams* par
 dmExtension::Result InitializeScreenshotExtension(dmExtension::Params* params) {
 		// Init Lua
 		LuaInit(params->m_L);
-		printf("Registered %s Extension\n", MODULE_NAME);
 		return dmExtension::RESULT_OK;
 }
 

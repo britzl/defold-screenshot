@@ -1,4 +1,7 @@
 // copyright britzl
+
+#if !defined(DM_HEADLESS)
+
 // Extension lib defines
 #define LIB_NAME "Screenshot"
 #define MODULE_NAME "screenshot"
@@ -249,16 +252,16 @@ static int HTML5_screenshot(lua_State* L) {
 		h = luaL_checkint(L, 4);
 		fn_num = 5;
 	}
-	
+
 	cbk.m_L = dmScript::GetMainThread(L);
 	luaL_checktype(L, fn_num, LUA_TFUNCTION);
 	lua_pushvalue(L, fn_num);
 	cbk.m_Callback = dmScript::Ref(L, LUA_REGISTRYINDEX);
 	dmScript::GetInstance(L);
 	cbk.m_Self = dmScript::Ref(L, LUA_REGISTRYINDEX);
-	
+
 	screenshot_on_the_next_frame(JsToCCallback, x, y, w, h);
-	
+
 	assert(top == lua_gettop(L));
 	return 0;
 }
@@ -310,3 +313,10 @@ dmExtension::Result FinalizeScreenshotExtension(dmExtension::Params* params) {
 // DM_DECLARE_EXTENSION(symbol, name, app_init, app_final, init, update, on_event, final)
 
 DM_DECLARE_EXTENSION(Screenshot, LIB_NAME, AppInitializeScreenshotExtension, AppFinalizeScreenshotExtension, InitializeScreenshotExtension, 0, 0, FinalizeScreenshotExtension)
+
+#else
+
+// dummy implementation
+extern "C" void Screenshot() {}
+
+#endif

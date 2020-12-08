@@ -26,7 +26,7 @@ var LibScreenshot = {
 			window.requestAnimationFrame = requestAnimationFrameSub;
 			var bs64_img = allocate(intArrayFromString(image), "i8", ALLOC_NORMAL);
 			setTimeout(function() {
-				Runtime.dynCall("vi", callback, [bs64_img]);
+				dynCall("vi", callback, [bs64_img]);
 				Module._free(bs64_img);
 			}, 0);
 		}

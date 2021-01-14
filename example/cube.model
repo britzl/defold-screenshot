@@ -1,5 +1,5 @@
-mesh: "/example/cube.dae"
-material: "/example/model.material"
+mesh: "/builtins/assets/meshes/cube.dae"
+material: "/builtins/materials/model.material"
 textures: "/example/images/logo.png"
 skeleton: ""
 animations: ""

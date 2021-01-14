@@ -13,8 +13,17 @@ var LibScreenshot = {
 				hidden_canvas.height = h;
 
 				var context = hidden_canvas.getContext('2d');
-				context.drawImage(canvas, x, canvas.height - y, w, h, 0, 0, w, h);
-				
+				var sx = x;
+				var sy = canvas.height - (y + h);
+				var sw = w;
+				var sh = h;
+
+				var dx = 0;
+				var dy = 0;
+				var dw = w;
+				var dh = h;
+				context.drawImage(canvas, sx, sy, sw, sh, dx, dy, dw, dh);
+
 				image = hidden_canvas.toDataURL("image/png");
 
 				document.body.removeChild(hidden_canvas)

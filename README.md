@@ -39,13 +39,22 @@ The extensions will declare a new module, exposed to Lua as `screenshot`. The ex
 		local url = go.get("cube#model", "texture0")
 		resource.set_texture(url, { type = resource.TEXTURE_TYPE_2D, width = w, height = h, format = resource.TEXTURE_FORMAT_RGBA }, buffer)
 
+		-- Take screenshot on POST_RENDER callback(https://github.com/britzl/defold-screenshot/issues/12)
+		screenshot.callback_png(function(self,png,w,h)
+			local f = io.open("screenshot1_cb.png", "wb")
+			f:write(png)
+			f:flush()
+			f:close()
+		end)
+
 		-- Take screenshot and return pixels as a Lua string
 		local pixels, w, h = screenshot.pixels()
-
+		
 		-- Capture screenshots of a portion of the screen
 		screenshot.png(x, y, w, h)
 		screenshot.buffer(x, y, w, h)
 		screenshot.pixels(x, y, w, h)
+		screenshot.callback_png(x, y, w, h, function(self,png,w,h) end)
 	end
 
 ```

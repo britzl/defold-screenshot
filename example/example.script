@@ -18,12 +18,12 @@ end
 
 function on_input(self, action_id, action)
 	if action.released then
-		if screenshot.html5 then
+		if html5 then
 			if self.click_num % 2 == 0 then
 				local x, y, w, h = 100, 300, 500, 600
-				screenshot.html5(x, y, w, h, html5_screenshot_callback)
+				screenshot.png(x, y, w, h, html5_screenshot_callback)
 			else
-				screenshot.html5(html5_screenshot_callback)
+				screenshot.png(html5_screenshot_callback)
 			end
 			self.click_num = self.click_num + 1
 		else
@@ -34,6 +34,13 @@ function on_input(self, action_id, action)
 			f:close()
 			local buffer, w, h = screenshot.buffer()
 			resource.set_texture(go.get("cube#model", "texture0"), { type = resource.TEXTURE_TYPE_2D, width = w, height = h, format = resource.TEXTURE_FORMAT_RGBA }, buffer)
+
+			screenshot.png(function(self, png, w, h)
+				f = io.open(sys.get_save_file(sys.get_config("project.title", "screenshot"), "screenshot1_cb.png"), "wb")
+				f:write(png)
+				f:flush()
+				f:close()
+			end)
 		end
 	end
 end

@@ -113,7 +113,7 @@ static int ReadPixelsToBuffer(lua_State* L, unsigned int x, unsigned int y, unsi
 
 		// validate and return
 		if (dmBuffer::ValidateBuffer(buffer) == dmBuffer::RESULT_OK) {
-			dmScript::LuaHBuffer luabuffer = { buffer, true };
+			dmScript::LuaHBuffer luabuffer(buffer, dmScript::OWNER_LUA);
 			dmScript::PushBuffer(L, luabuffer);
 			lua_pushnumber(L, w);
 			lua_pushnumber(L, h);

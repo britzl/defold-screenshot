@@ -14,13 +14,24 @@
 	#include <GLES2/gl2ext.h>
 #endif
 
+static void ClearGLError()
+{
+	GLint err = glGetError();
+	while (err != 0)
+	{
+		err = glGetError();
+	}
+}
 
 static GLubyte* DoReadPixels(unsigned int x, unsigned int y, unsigned int w, unsigned int h) {
 	GLubyte* data = new GLubyte[w * h * 4];
-#if defined(__MACH__) && !( defined(__arm__) || defined(__arm64__) )
-	glBindRenderbuffer(GL_RENDERBUFFER, 1);
-#endif
+	#if defined(__MACH__) && !( defined(__arm__) || defined(__arm64__) )
+		glBindRenderbuffer(GL_RENDERBUFFER, 1);
+	#endif
+
 	glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+	ClearGLError();
 	return data;
 }
 

@@ -180,7 +180,7 @@ static int ScreenshotWithFormat(lua_State* L, ScreenshotFormat format)
 		g_Screenshot.y = y;
 		g_Screenshot.w = w;
 		g_Screenshot.h = h;
-		g_Screenshot.format = Pixels;
+		g_Screenshot.format = format;
 
 		assert(top == lua_gettop(L));
 		return 0;

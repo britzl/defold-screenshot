@@ -80,13 +80,23 @@ static int ReadPixelsToPng(lua_State* L, unsigned int x, unsigned int y, unsigne
 	// encode to png
 	unsigned char* out = 0;
 	size_t outsize = 0;
-	lodepng_encode_memory(&out, &outsize, pixels, w, h, LCT_RGBA, 8);
+	unsigned result = lodepng_encode_memory(&out, &outsize, pixels, w, h, LCT_RGBA, 8);
 	delete pixels;
 
 	// Put the pixel data onto the stack
-	lua_pushlstring(L, (char*)out, outsize);
-	lua_pushnumber(L, w);
-	lua_pushnumber(L, h);
+	if (result == 0)
+	{
+		lua_pushlstring(L, (char*)out, outsize);
+		lua_pushnumber(L, w);
+		lua_pushnumber(L, h);
+	}
+	else {
+		dmLogError("lodepng_encode_memory failed with return code %u", result);
+		lua_pushnil(L);
+		lua_pushnil(L);
+		lua_pushnil(L);
+	}
+	free(out);
 	return 3;
 }
 

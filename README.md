@@ -67,5 +67,5 @@ local pixels, w, h = screenshot.pixels()
 
 
 ## Credits
-* [LodePNG](http://lodev.org/lodepng/) for PNG encoding
+* [fpng](https://github.com/richgel999/fpng) for PNG encoding
 * Graphics in example by [Kenney](http://www.kenney.nl)

@@ -4,12 +4,11 @@
 
 
 #include <dmsdk/sdk.h>
+#include "fpng.h"
 
 #if defined(_WIN32)
-	#include "./lodepng.h"
 	#include <gl/GL.h>
 #else
-	#include "./lodepng.h"
 	#include <GLES2/gl2.h>
 	#include <GLES2/gl2ext.h>
 #endif
@@ -78,25 +77,23 @@ static int ReadPixelsToPng(lua_State* L, unsigned int x, unsigned int y, unsigne
 	}
 
 	// encode to png
-	unsigned char* out = 0;
-	size_t outsize = 0;
-	unsigned result = lodepng_encode_memory(&out, &outsize, pixels, w, h, LCT_RGBA, 8);
+	std::vector<uint8_t> out;
+	bool result = fpng::fpng_encode_image_to_memory(pixels, w, h, 4, out);
 	delete pixels;
 
 	// Put the pixel data onto the stack
-	if (result == 0)
+	if (result)
 	{
-		lua_pushlstring(L, (char*)out, outsize);
+		lua_pushlstring(L, (char*)out.data(), out.size());
 		lua_pushnumber(L, w);
 		lua_pushnumber(L, h);
 	}
 	else {
-		dmLogError("lodepng_encode_memory failed with return code %u", result);
+		dmLogError("fpng_encode_image_to_memory failed");
 		lua_pushnil(L);
 		lua_pushnil(L);
 		lua_pushnil(L);
 	}
-	free(out);
 	return 3;
 }
 
@@ -269,6 +266,8 @@ static dmExtension::Result PostRenderScreenshot(dmExtension::Params* params) {
 
 void Platform_AppInitializeScreenshotExtension(dmExtension::AppParams* params)
 {
+	fpng::fpng_init();
+
 	dmExtension::RegisterCallback(dmExtension::CALLBACK_POST_RENDER, PostRenderScreenshot );
 }
 

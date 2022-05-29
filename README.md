@@ -45,7 +45,7 @@ local image, w, h = screenshot.png(0, 0, 100, 200)
 ```
 
 ### screenshot.buffer([x, y, w, h, [callback]])
-Capture a full screen or partial screenshot as a Defold buffer. Not available on HTML5.
+Capture a full screen or partial screenshot as a Defold buffer.
 
 ```
 -- Take screenshot and return it as a Defold buffer
@@ -58,7 +58,7 @@ resource.set_texture(url, { type = resource.TEXTURE_TYPE_2D, width = w, height =
 
 
 ### screenshot.pixels([x, y, w, h, [callback]])
-Capture a full screen or partial screenshot as raw pixels. Not available on HTML5.
+Capture a full screen or partial screenshot as raw pixels.
 
 ```
 -- Take screenshot and return pixels as a Lua string

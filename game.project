@@ -1,6 +1,6 @@
 [project]
 title = Screenshot
-dependencies = 
+dependencies#0 = https://github.com/defold/extension-crypt/archive/refs/tags/1.0.2.zip
 
 [bootstrap]
 main_collection = /example/example.collectionc
@@ -12,6 +12,7 @@ game_binding = /input/game.input_bindingc
 [display]
 width = 640
 height = 1136
+high_dpi = 1
 
 [script]
 shared_state = 1

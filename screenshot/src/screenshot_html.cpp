@@ -79,7 +79,7 @@ static int RawImageToPixels(lua_State* L, const char *pixels, unsigned int w, un
 	FlipRawImage(pixels, w, h);
 
 	// Put the pixel data onto the stack
-	lua_pushlstring(L, (char*)pixels, w * h);
+	lua_pushlstring(L, (char*)pixels, w * h * 4);
 	lua_pushnumber(L, w);
 	lua_pushnumber(L, h);
 

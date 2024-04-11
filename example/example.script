@@ -9,7 +9,7 @@ end
 
 local function download_base64_image(img)
 	local img_for_download = "data:image/png;base64," .. crypt.encode_base64(img)
-	html5.run("var link = document.createElement('a');link.download = 'screenshot.png';link.href = '" .. img_for_download .. "';link.click();link.delete();")
+	html5.run("var link = document.createElement('a');link.download = 'screenshot.png';link.href = '" .. img_for_download .. "';link.click();link.remove();")
 end
 
 local function html5_screenshot_callback(self, img)

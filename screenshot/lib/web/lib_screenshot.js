@@ -28,13 +28,13 @@ var LibScreenshot = {
 			// img_rgba is `Uint8ClampedArray` representing a one-dimensional array containing
 			// the data in the RGBA order, with integer values between 0 and 255 (inclusive).
 			var img_rgba = context.getImageData(dx, dy, dw, dh);
-			var img_buf = Module._malloc(img_rgba.data.length * img_rgba.data.BYTES_PER_ELEMENT);
-			Module.HEAPU8.set(img_rgba.data, img_buf);
+			var img_buf = _malloc(img_rgba.data.length * img_rgba.data.BYTES_PER_ELEMENT);
+			HEAPU8.set(img_rgba.data, img_buf);
 			document.body.removeChild(hidden_canvas);
 
 			setTimeout(function() {
 				{{{ makeDynCall("viiii", "callback") }}} (img_buf, w, h);
-				Module._free(img_buf);
+				_free(img_buf);
 			}, 0);
 
 			window.requestAnimationFrame = requestAnimationFrameSub;
@@ -43,4 +43,4 @@ var LibScreenshot = {
 	}
 }
 
-mergeInto(LibraryManager.library, LibScreenshot);
+addToLibrary(LibScreenshot);

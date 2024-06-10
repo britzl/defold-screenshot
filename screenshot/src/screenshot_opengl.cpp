@@ -268,7 +268,7 @@ void Platform_AppInitializeScreenshotExtension(dmExtension::AppParams* params)
 {
 	fpng::fpng_init();
 
-	dmExtension::RegisterCallback(dmExtension::CALLBACK_POST_RENDER, PostRenderScreenshot );
+	dmExtension::RegisterCallback(dmExtension::CALLBACK_POST_RENDER, (FExtensionCallback)PostRenderScreenshot);
 }
 
 #endif

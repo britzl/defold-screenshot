@@ -29,23 +29,6 @@ typedef void (*JsCallback)(const char* image, const int w, const int h);
 
 extern "C" void screenshot_on_the_next_frame(JsCallback callback, int x, int y, int w, int h);
 
-static void FlipRawImage(const char *pixels, unsigned int w, unsigned int h)
-{
-	unsigned int *p = (unsigned int*)pixels;
-
-	// flip vertically
-	for (int yi=0; yi < (h / 2); yi++) {
-		for (int xi=0; xi < w; xi++) {
-			unsigned int offset1 = xi + (yi * w);
-			unsigned int offset2 = xi + ((h - 1 - yi) * w);
-			unsigned int pixel1 = p[offset1];
-			unsigned int pixel2 = p[offset2];
-			p[offset1] = pixel2;
-			p[offset2] = pixel1;
-		}
-	}
-}
-
 static int RawImageToPng(lua_State* L, const char *pixels, unsigned int w, unsigned int h)
 {
 	DM_LUA_STACK_CHECK(L, 3);
@@ -76,8 +59,6 @@ static int RawImageToPixels(lua_State* L, const char *pixels, unsigned int w, un
 {
 	DM_LUA_STACK_CHECK(L, 3);
 
-	FlipRawImage(pixels, w, h);
-
 	// Put the pixel data onto the stack
 	lua_pushlstring(L, (char*)pixels, w * h * 4);
 	lua_pushnumber(L, w);
@@ -89,8 +70,6 @@ static int RawImageToPixels(lua_State* L, const char *pixels, unsigned int w, un
 static int RawImageToBuffer(lua_State* L, const char *pixels, unsigned int w, unsigned int h)
 {
 	DM_LUA_STACK_CHECK(L, 3);
-
-	FlipRawImage(pixels, w, h);
 
 	// create buffer
 	dmBuffer::HBuffer buffer;
@@ -211,6 +190,6 @@ int Platform_ScreenshotAsBuffer(lua_State* L)
 
 void Platform_AppInitializeScreenshotExtension(dmExtension::AppParams* params) { }
 
-
+void Platform_InitializeScreenshotExtension(dmExtension::Params* params) { }
 
 #endif

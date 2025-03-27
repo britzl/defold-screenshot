@@ -37,6 +37,7 @@ dmExtension::Result AppInitializeScreenshotExtension(dmExtension::AppParams* par
 }
 
 dmExtension::Result InitializeScreenshotExtension(dmExtension::Params* params) {
+	Platform_InitializeScreenshotExtension(params);
 	// Init Lua
 	LuaInit(params->m_L);
 	return dmExtension::RESULT_OK;

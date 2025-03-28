@@ -9,7 +9,7 @@ static dmGraphics::HContext g_GraphicsContext = NULL;
 
 static void* DoReadPixels(unsigned int x, unsigned int y, unsigned int w, unsigned int h)
 {
-	uint32_t size = (w - x) * (h - y) * 4;
+	uint32_t size = w * h * 4;
 	void* data = malloc(size);
 	// ReadPixels return data in BGRA format
     dmGraphics::ReadPixels(g_GraphicsContext, x, y, w, h, data, size);

@@ -12,7 +12,7 @@ static void* DoReadPixels(unsigned int x, unsigned int y, unsigned int w, unsign
 	uint32_t size = w * h * 4;
 	void* data = malloc(size);
 	// ReadPixels return data in BGRA format
-    dmGraphics::ReadPixels(g_GraphicsContext, x, y, w, h, data, size);
+	dmGraphics::ReadPixels(g_GraphicsContext, x, y, w, h, data, size);
 
 	// convert BGRA to RGBA
 	uint32_t* pixels = (uint32_t*)data;

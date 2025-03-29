@@ -149,7 +149,7 @@ static int ScreenshotWithFormat(lua_State* L, ScreenshotFormat format)
 	}
 	else
 	{
-		dmGraphics::GetViewport(g_GraphicsContext, x, y, w, h);
+		dmGraphics::GetViewport(g_GraphicsContext, &x, &y, &w, &h);
 	}
 
 	// callback?

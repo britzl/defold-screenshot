@@ -2,35 +2,30 @@
 
 #if !defined(__EMSCRIPTEN__)
 
-
 #include <dmsdk/sdk.h>
 #include "fpng.h"
 
-#if defined(_WIN32)
-	#include <gl/GL.h>
-#else
-	#include <GLES2/gl2.h>
-	#include <GLES2/gl2ext.h>
-#endif
+static dmGraphics::HContext g_GraphicsContext = NULL;
 
-static void ClearGLError()
+static void* DoReadPixels(unsigned int x, unsigned int y, unsigned int w, unsigned int h)
 {
-	GLint err = glGetError();
-	while (err != 0)
+	uint32_t size = w * h * 4;
+	void* data = malloc(size);
+	// ReadPixels return data in BGRA format
+	dmGraphics::ReadPixels(g_GraphicsContext, x, y, w, h, data, size);
+
+	// convert BGRA to RGBA
+	uint32_t* pixels = (uint32_t*)data;
+	for (uint32_t i = 0; i < size / 4; ++i)
 	{
-		err = glGetError();
+		uint32_t pixel = pixels[i];
+		uint32_t r = (pixel & 0x000000ff) << 16;
+		uint32_t g = (pixel & 0x0000ff00);
+		uint32_t b = (pixel & 0x00ff0000) >> 16;
+		uint32_t a = (pixel & 0xff000000);
+		pixels[i] = r | g | b | a;
 	}
-}
 
-static GLubyte* DoReadPixels(unsigned int x, unsigned int y, unsigned int w, unsigned int h) {
-	GLubyte* data = new GLubyte[w * h * 4];
-	#if defined(__MACH__) && !( defined(__arm__) || defined(__arm64__) )
-		glBindRenderbuffer(GL_RENDERBUFFER, 1);
-	#endif
-
-	glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, data);
-
-	ClearGLError();
 	return data;
 }
 
@@ -57,29 +52,15 @@ struct Screenshot
 
 static Screenshot g_Screenshot;
 
-
 static int ReadPixelsToPng(lua_State* L, unsigned int x, unsigned int y, unsigned int w, unsigned int h)
 {
 	DM_LUA_STACK_CHECK(L, 3);
-	GLubyte* pixels = DoReadPixels(x, y, w, h);
-	unsigned int *p = (unsigned int*)pixels;
-
-	// flip vertically
-	for (int yi=0; yi < (h / 2); yi++) {
-		for (int xi=0; xi < w; xi++) {
-			unsigned int offset1 = xi + (yi * w);
-			unsigned int offset2 = xi + ((h - 1 - yi) * w);
-			unsigned int pixel1 = p[offset1];
-			unsigned int pixel2 = p[offset2];
-			p[offset1] = pixel2;
-			p[offset2] = pixel1;
-		}
-	}
+	void* pixels = DoReadPixels(x, y, w, h);
 
 	// encode to png
 	std::vector<uint8_t> out;
 	bool result = fpng::fpng_encode_image_to_memory(pixels, w, h, 4, out);
-	delete pixels;
+	free(pixels);
 
 	// Put the pixel data onto the stack
 	if (result)
@@ -100,20 +81,20 @@ static int ReadPixelsToPng(lua_State* L, unsigned int x, unsigned int y, unsigne
 static int ReadPixels(lua_State* L, unsigned int x, unsigned int y, unsigned int w, unsigned int h)
 {
 	DM_LUA_STACK_CHECK(L, 3);
-	GLubyte* pixels = DoReadPixels(x, y, w, h);
+	void* pixels = DoReadPixels(x, y, w, h);
 
 	// Put the pixel data onto the stack
 	lua_pushlstring(L, (char*)pixels, w * h * 4);
 	lua_pushnumber(L, w);
 	lua_pushnumber(L, h);
-	delete pixels;
+	free(pixels);
 	return 3;
 }
 
 static int ReadPixelsToBuffer(lua_State* L, unsigned int x, unsigned int y, unsigned int w, unsigned int h)
 {
 	DM_LUA_STACK_CHECK(L, 3);
-	GLubyte* pixels = DoReadPixels(x, y, w, h);
+	void* pixels = DoReadPixels(x, y, w, h);
 
 	// create buffer
 	dmBuffer::HBuffer buffer;
@@ -127,7 +108,7 @@ static int ReadPixelsToBuffer(lua_State* L, unsigned int x, unsigned int y, unsi
 		uint32_t datasize = 0;
 		dmBuffer::GetBytes(buffer, (void**)&data, &datasize);
 		memcpy(data, pixels, datasize);
-		delete pixels;
+		free(pixels);
 
 		// validate and return
 		if (dmBuffer::ValidateBuffer(buffer) == dmBuffer::RESULT_OK) {
@@ -144,7 +125,7 @@ static int ReadPixelsToBuffer(lua_State* L, unsigned int x, unsigned int y, unsi
 	}
 	// buffer creation failed
 	else {
-		delete pixels;
+		free(pixels);
 		lua_pushnil(L);
 		lua_pushnil(L);
 		lua_pushnil(L);
@@ -157,7 +138,8 @@ static int ScreenshotWithFormat(lua_State* L, ScreenshotFormat format)
 {
 	int top = lua_gettop(L);
 
-	unsigned int x, y, w, h;
+	int32_t x, y;
+	uint32_t w, h;
 	if (top >= 4)
 	{
 		x = luaL_checkint(L, 1);
@@ -167,12 +149,7 @@ static int ScreenshotWithFormat(lua_State* L, ScreenshotFormat format)
 	}
 	else
 	{
-		GLint viewport[4];
-		glGetIntegerv(GL_VIEWPORT, viewport);
-		x = viewport[0];
-		y = viewport[1];
-		w = viewport[2];
-		h = viewport[3];
+		dmGraphics::GetViewport(g_GraphicsContext, &x, &y, &w, &h);
 	}
 
 	// callback?
@@ -269,6 +246,12 @@ void Platform_AppInitializeScreenshotExtension(dmExtension::AppParams* params)
 	fpng::fpng_init();
 
 	dmExtension::RegisterCallback(dmExtension::CALLBACK_POST_RENDER, (FExtensionCallback)PostRenderScreenshot);
+}
+
+void Platform_InitializeScreenshotExtension(dmExtension::Params* params)
+{
+	g_GraphicsContext = ExtensionParamsGetContextByName(params, "graphics");
+	assert(g_GraphicsContext != NULL);
 }
 
 #endif

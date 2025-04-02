@@ -39,12 +39,13 @@ function on_input(self, action_id, action)
 			
 			self.click_num = self.click_num + 1
 		else
-			local png, w, h = screenshot.png()
+			local x, y, width, height = 100, 300, 500, 600
+			local png, w, h = screenshot.png(x, y, width, height)
 			local f = io.open(sys.get_save_file(sys.get_config("project.title", "screenshot"), "screenshot1.png"), "wb")
 			f:write(png)
 			f:flush()
 			f:close()
-			local buffer, w, h = screenshot.buffer()
+			local buffer, w, h = screenshot.buffer(x, y, width, height)
 			resource.set_texture(go.get("cube#model", "texture0"), { type = resource.TEXTURE_TYPE_2D, width = w, height = h, format = resource.TEXTURE_FORMAT_RGBA }, buffer)
 
 			screenshot.png(function(self, png, w, h)

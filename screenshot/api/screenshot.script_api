@@ -1,0 +1,250 @@
+- name: screenshot
+  type: table
+  desc: Functions for capturing full-screen or partial screenshots.
+
+  members:
+
+#*****************************************************************************************************
+
+  - name: png
+    type: function
+    desc: Capture a screenshot as PNG-encoded bytes. On native platforms this is synchronous unless a
+          callback is provided. On HTML5, only the asynchronous callback form is supported.
+
+    parameters:
+    - name: x
+      type: number
+      optional: true
+      desc: X coordinate (lower-left) for partial capture.
+
+    - name: y
+      type: number
+      optional: true
+      desc: Y coordinate (lower-left) for partial capture.
+
+    - name: w
+      type: number
+      optional: true
+      desc: Width for partial capture.
+
+    - name: h
+      type: number
+      optional: true
+      desc: Height for partial capture.
+
+    - name: callback
+      type: function
+      optional: true
+      desc: Called on post-render (or next frame on HTML5) with the PNG bytes.
+
+      parameters:
+        - name: self
+          type: object
+          desc: The calling script instance.
+
+        - name: image
+          type: string
+          desc: PNG data as a Lua string.
+
+        - name: width
+          type: number
+          desc: Image width in pixels.
+
+        - name: height
+          type: number
+          desc: Image height in pixels.
+
+    returns:
+    - name: image
+      type: string
+      desc: PNG data as a Lua string (native only, synchronous form).
+
+    - name: width
+      type: number
+
+    - name: height
+      type: number
+
+    examples:
+      - desc: |-
+                 ```lua
+                 -- fullscreen with callback
+                 screenshot.png(function(self, image, w, h)
+                     -- do something with image
+                 end)
+
+                 -- partial with callback
+                 screenshot.png(0, 0, 100, 200, function(self, image, w, h)
+                     -- do something with image
+                 end)
+
+                 -- fullscreen (native only)
+                 local image, w, h = screenshot.png()
+                 ```
+
+#*****************************************************************************************************
+
+  - name: buffer
+    type: function
+    desc: Capture a screenshot as a Defold buffer. On native platforms this is synchronous unless a
+          callback is provided. On HTML5, only the asynchronous callback form is supported.
+
+    parameters:
+    - name: x
+      type: number
+      optional: true
+      desc: X coordinate (lower-left) for partial capture.
+
+    - name: y
+      type: number
+      optional: true
+      desc: Y coordinate (lower-left) for partial capture.
+
+    - name: w
+      type: number
+      optional: true
+      desc: Width for partial capture.
+
+    - name: h
+      type: number
+      optional: true
+      desc: Height for partial capture.
+
+    - name: callback
+      type: function
+      optional: true
+      desc: Called on post-render (or next frame on HTML5) with the buffer.
+
+      parameters:
+        - name: self
+          type: object
+          desc: The calling script instance.
+
+        - name: buffer
+          type: buffer
+          desc: Defold buffer containing RGBA pixels.
+
+        - name: width
+          type: number
+          desc: Image width in pixels.
+
+        - name: height
+          type: number
+          desc: Image height in pixels.
+
+    returns:
+    - name: buffer
+      type: buffer
+      desc: Defold buffer containing RGBA pixels (native only, synchronous form).
+
+    - name: width
+      type: number
+
+    - name: height
+      type: number
+
+    examples:
+      - desc: |-
+                 ```lua
+                 local buffer, w, h = screenshot.buffer()
+                 resource.set_texture(go.get("cube#model", "texture0"), {
+                     type = resource.TEXTURE_TYPE_2D,
+                     width = w,
+                     height = h,
+                     format = resource.TEXTURE_FORMAT_RGBA
+                 }, buffer)
+                 ```
+
+#*****************************************************************************************************
+
+  - name: pixels
+    type: function
+    desc: Capture a screenshot as raw RGBA pixels in a Lua string. On native platforms this is
+          synchronous unless a callback is provided. On HTML5, only the asynchronous callback form is
+          supported.
+
+    parameters:
+    - name: x
+      type: number
+      optional: true
+      desc: X coordinate (lower-left) for partial capture.
+
+    - name: y
+      type: number
+      optional: true
+      desc: Y coordinate (lower-left) for partial capture.
+
+    - name: w
+      type: number
+      optional: true
+      desc: Width for partial capture.
+
+    - name: h
+      type: number
+      optional: true
+      desc: Height for partial capture.
+
+    - name: callback
+      type: function
+      optional: true
+      desc: Called on post-render (or next frame on HTML5) with the pixel data.
+
+      parameters:
+        - name: self
+          type: object
+          desc: The calling script instance.
+
+        - name: pixels
+          type: string
+          desc: Raw RGBA bytes as a Lua string.
+
+        - name: width
+          type: number
+          desc: Image width in pixels.
+
+        - name: height
+          type: number
+          desc: Image height in pixels.
+
+    returns:
+    - name: pixels
+      type: string
+      desc: Raw RGBA bytes as a Lua string (native only, synchronous form).
+
+    - name: width
+      type: number
+
+    - name: height
+      type: number
+
+    examples:
+      - desc: |-
+                 ```lua
+                 local pixels, w, h = screenshot.pixels()
+                 ```
+
+#*****************************************************************************************************
+
+  - name: html5
+    type: function
+    desc: HTML5-only alias for `screenshot.png()`. Callback form only.
+
+    parameters:
+    - name: callback
+      type: function
+      desc: Called on the next frame with PNG bytes.
+
+      parameters:
+        - name: self
+          type: object
+          desc: The calling script instance.
+
+        - name: image
+          type: string
+          desc: PNG data as a Lua string.
+
+        - name: width
+          type: number
+
+        - name: height
+          type: number

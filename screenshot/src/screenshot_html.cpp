@@ -1,4 +1,3 @@
-// copyright britzl
 #include <dmsdk/sdk.h>
 
 #if defined(__EMSCRIPTEN__)

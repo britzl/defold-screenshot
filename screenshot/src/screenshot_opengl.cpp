@@ -1,5 +1,3 @@
-// copyright britzl
-
 #if !defined(__EMSCRIPTEN__)
 
 

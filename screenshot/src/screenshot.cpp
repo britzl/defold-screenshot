@@ -1,5 +1,3 @@
-// copyright britzl
-
 #if !defined(DM_HEADLESS)
 
 // Extension lib defines

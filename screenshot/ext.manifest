@@ -1,18 +1,1 @@
 name: "Screenshot"
-
-platforms:
-  arm64-osx:
-    context:
-      excludeLibs: [graphics_vulkan, platform_null, platform_vulkan, MoltenVK]
-      excludeSymbols: [GraphicsAdapterVulkan, GraphicsAdapterNull]
-      symbols: [GraphicsAdapterOpenGL]
-      libs: [graphics, platform]
-      frameworks: [OpenGL]
-
-  x86_64-osx:
-    context:
-      excludeLibs: [graphics_vulkan, platform_null, platform_vulkan, MoltenVK]
-      excludeSymbols: [GraphicsAdapterVulkan, GraphicsAdapterNull]
-      symbols: [GraphicsAdapterOpenGL]
-      libs: [graphics, platform]
-      frameworks: [OpenGL]

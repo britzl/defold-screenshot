@@ -1,5 +1,3 @@
-// copyright britzl
-
 #if !defined(__EMSCRIPTEN__)
 
 #include <dmsdk/sdk.h>
@@ -197,10 +195,10 @@ int Platform_ScreenshotAsBuffer(lua_State* L) {
 	return ScreenshotWithFormat(L, Buffer);
 }
 
-static dmExtension::Result PostRenderScreenshot(dmExtension::Params* params) {
+static ExtensionResult PostRenderScreenshot(ExtensionParams* params) {
 	if (g_Screenshot.m_Callback == 0)
 	{
-		return dmExtension::RESULT_OK;
+		return EXTENSION_RESULT_OK;
 	}
 
 	lua_State* L = dmScript::GetCallbackLuaContext(g_Screenshot.m_Callback);
@@ -208,14 +206,14 @@ static dmExtension::Result PostRenderScreenshot(dmExtension::Params* params) {
 	if (!dmScript::IsCallbackValid(g_Screenshot.m_Callback))
 	{
 		g_Screenshot.m_Callback = 0;
-		return dmExtension::RESULT_OK;
+		return EXTENSION_RESULT_OK;
 	}
 
 	if (!dmScript::SetupCallback(g_Screenshot.m_Callback))
 	{
 		dmScript::DestroyCallback(g_Screenshot.m_Callback);
 		g_Screenshot.m_Callback = 0;
-		return dmExtension::RESULT_OK;
+		return EXTENSION_RESULT_OK;
 	}
 
 	int num_values = 0;
@@ -238,7 +236,7 @@ static dmExtension::Result PostRenderScreenshot(dmExtension::Params* params) {
 	dmScript::DestroyCallback(g_Screenshot.m_Callback);
 	g_Screenshot.m_Callback = 0;
 
-	return dmExtension::RESULT_OK;
+	return EXTENSION_RESULT_OK;
 }
 
 void Platform_AppInitializeScreenshotExtension(dmExtension::AppParams* params)
@@ -250,7 +248,7 @@ void Platform_AppInitializeScreenshotExtension(dmExtension::AppParams* params)
 
 void Platform_InitializeScreenshotExtension(dmExtension::Params* params)
 {
-	g_GraphicsContext = ExtensionParamsGetContextByName(params, "graphics");
+	g_GraphicsContext = (dmGraphics::HContext)ExtensionParamsGetContextByName(params, "graphics");
 	assert(g_GraphicsContext != NULL);
 }
 

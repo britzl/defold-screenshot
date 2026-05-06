@@ -399,7 +399,7 @@ void RegisterDebugScreenshotEndpoint(dmExtension::AppParams* params)
 	if (result == dmWebServer::RESULT_OK)
 	{
 		g_DebugEndpointRegistered = true;
-		dmLogInfo("Screenshot debug endpoint registered at `%s` (https://127.0.0.1:engine_service_port%s)", DEBUG_SCREENSHOT_ENDPOINT, DEBUG_SCREENSHOT_ENDPOINT);
+		dmLogInfo("Screenshot debug endpoint registered at `%s` (http://127.0.0.1:engine_service_port%s)", DEBUG_SCREENSHOT_ENDPOINT, DEBUG_SCREENSHOT_ENDPOINT);
 	}
 	else if (result != dmWebServer::RESULT_HANDLER_ALREADY_REGISTRED)
 	{

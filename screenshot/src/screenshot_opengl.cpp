@@ -1,3 +1,8 @@
+// TODO: Remove this fallback in 1.13.0 when DM_DEBUG is defined by the build again.
+#if !defined(DM_RELEASE) && !defined(DM_HEADLESS) && !defined(DM_DEBUG)
+#define DM_DEBUG
+#endif
+
 #if !defined(__EMSCRIPTEN__)
 
 #include <dmsdk/sdk.h>

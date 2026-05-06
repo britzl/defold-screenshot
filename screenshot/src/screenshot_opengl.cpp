@@ -1,6 +1,16 @@
+// TODO: Remove this fallback in 1.13.0 when DM_DEBUG is defined by the build again.
+#if !defined(DM_RELEASE) && !defined(DM_HEADLESS) && !defined(DM_DEBUG)
+#define DM_DEBUG
+#endif
+
 #if !defined(__EMSCRIPTEN__)
 
 #include <dmsdk/sdk.h>
+
+#if defined(DM_DEBUG)
+#include "screenshot_debug_webserver.h"
+#endif
+
 #include "fpng.h"
 
 static dmGraphics::HContext g_GraphicsContext = NULL;
@@ -75,6 +85,34 @@ static int ReadPixelsToPng(lua_State* L, unsigned int x, unsigned int y, unsigne
 	}
 	return 3;
 }
+
+#if defined(DM_DEBUG)
+DebugScreenshotCaptureResult Platform_CaptureDebugScreenshotToPngMemory(std::vector<uint8_t>& out)
+{
+	if (!g_GraphicsContext)
+	{
+		return DEBUG_SCREENSHOT_CAPTURE_RESULT_NO_GRAPHICS_CONTEXT;
+	}
+
+	int32_t x = 0;
+	int32_t y = 0;
+	uint32_t w = 0;
+	uint32_t h = 0;
+	dmGraphics::GetViewport(g_GraphicsContext, &x, &y, &w, &h);
+
+	void* pixels = DoReadPixels((unsigned int)x, (unsigned int)y, w, h);
+	bool result = fpng::fpng_encode_image_to_memory(pixels, w, h, 4, out);
+	free(pixels);
+
+	if (!result)
+	{
+		dmLogError("fpng_encode_image_to_memory failed");
+		return DEBUG_SCREENSHOT_CAPTURE_RESULT_ENCODE_FAILED;
+	}
+
+	return DEBUG_SCREENSHOT_CAPTURE_RESULT_OK;
+}
+#endif
 
 static int ReadPixels(lua_State* L, unsigned int x, unsigned int y, unsigned int w, unsigned int h)
 {
@@ -196,6 +234,10 @@ int Platform_ScreenshotAsBuffer(lua_State* L) {
 }
 
 static ExtensionResult PostRenderScreenshot(ExtensionParams* params) {
+#if defined(DM_DEBUG)
+	ProcessPendingDebugScreenshot();
+#endif
+
 	if (g_Screenshot.m_Callback == 0)
 	{
 		return EXTENSION_RESULT_OK;
@@ -244,6 +286,19 @@ void Platform_AppInitializeScreenshotExtension(dmExtension::AppParams* params)
 	fpng::fpng_init();
 
 	dmExtension::RegisterCallback(dmExtension::CALLBACK_POST_RENDER, (FExtensionCallback)PostRenderScreenshot);
+
+#if defined(DM_DEBUG)
+	RegisterDebugScreenshotEndpoint(params);
+#endif
+}
+
+void Platform_AppFinalizeScreenshotExtension(dmExtension::AppParams* params)
+{
+	(void)params;
+
+#if defined(DM_DEBUG)
+	UnregisterDebugScreenshotEndpoint();
+#endif
 }
 
 void Platform_InitializeScreenshotExtension(dmExtension::Params* params)

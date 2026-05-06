@@ -1,7 +1,10 @@
-mesh: "/builtins/assets/meshes/cube.dae"
-material: "/builtins/materials/model.material"
-textures: "/example/images/logo.png"
-skeleton: ""
-animations: ""
-default_animation: ""
+mesh: "/builtins/assets/gltf/cube.gltf"
 name: "unnamed"
+materials {
+  name: "default"
+  material: "/builtins/materials/model.material"
+  textures {
+    sampler: "tex0"
+    texture: "/example/images/logo.png"
+  }
+}

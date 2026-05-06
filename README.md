@@ -65,6 +65,21 @@ Capture a full screen or partial screenshot as raw pixels.
 local pixels, w, h = screenshot.pixels()
 ```
 
+## Debug endpoint
+Native debug builds register a `GET`/`POST` endpoint on the Defold engine debug webserver:
+
+```
+http://<host>:<engine-service-port>/screenshot
+```
+
+The endpoint schedules a current viewport capture on the next post-render step, writes a PNG file to a writable debug screenshot directory, and returns the path as JSON:
+
+```
+{"path":"/tmp/defold-screenshot/screenshot-1778060000-1.png"}
+```
+
+This endpoint is only compiled when `DM_DEBUG` is defined. It is not available in release, headless, or HTML5 builds.
+
 
 ## Credits
 * [fpng](https://github.com/richgel999/fpng) for PNG encoding

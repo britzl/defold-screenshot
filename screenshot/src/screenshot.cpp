@@ -42,6 +42,7 @@ dmExtension::Result InitializeScreenshotExtension(dmExtension::Params* params) {
 }
 
 dmExtension::Result AppFinalizeScreenshotExtension(dmExtension::AppParams* params) {
+	Platform_AppFinalizeScreenshotExtension(params);
 	return dmExtension::RESULT_OK;
 }
 

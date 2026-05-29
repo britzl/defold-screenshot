@@ -22,10 +22,10 @@ function on_input(self, action_id, action)
 			if self.click_num == 1 then
 				screenshot.buffer(function (self, buffer, w, h)
 					resource.set_texture(go.get("cube#model", "texture0"), {
-						type = resource.TEXTURE_TYPE_2D,
+						type = graphics.TEXTURE_TYPE_2D,
 						width = w,
 						height = h,
-						format = resource.TEXTURE_FORMAT_RGBA
+						format = graphics.TEXTURE_FORMAT_RGBA
 					}, buffer)
 				end)
 			elseif self.click_num == 2 then
@@ -47,7 +47,7 @@ function on_input(self, action_id, action)
 			do
 				-- screenshot to png and save as file
 				local png, w, h = screenshot.png(x, y, width, height)
-				local path = sys.get_save_file(sys.get_config("project.title", "screenshot"), "screenshot1.png")
+				local path = sys.get_save_file(sys.get_config_string("project.title", "screenshot"), "screenshot1.png")
 				local f = assert(io.open(path, "wb"))
 				f:write(png)
 				f:flush()
@@ -58,13 +58,13 @@ function on_input(self, action_id, action)
 			do
 				-- screenshot to buffer and set as texture
 				local buffer, w, h = screenshot.buffer(x, y, width, height)
-				resource.set_texture(go.get("cube#model", "texture0"), { type = resource.TEXTURE_TYPE_2D, width = w, height = h, format = resource.TEXTURE_FORMAT_RGBA }, buffer)
+				resource.set_texture(go.get("cube#model", "texture0"), { type = graphics.TEXTURE_TYPE_2D, width = w, height = h, format = graphics.TEXTURE_FORMAT_RGBA }, buffer)
 			end
 
 			do
 				-- screenshot to png with callback and save as file
 				screenshot.png(function(self, png, w, h)
-					local path = sys.get_save_file(sys.get_config("project.title", "screenshot"), "screenshot1_cb.png")
+					local path = sys.get_save_file(sys.get_config_string("project.title", "screenshot"), "screenshot1_cb.png")
 					local f = assert(io.open(path, "wb"))
 					f:write(png)
 					f:flush()
